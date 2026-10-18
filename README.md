@@ -1,28 +1,26 @@
 # JULIETA VA AL COLE
 
-Videojuego móvil en HTML: Isaías o Nacho empujan el carrito de Julieta desde la puerta principal hasta Taberna Torneo (Sevilla).
+Videojuego HTML/JavaScript para móvil. Isaías o Nacho empujan el carrito de Julieta por Sevilla.
 
-## Reglas del proyecto
-- Conservar el escenario original, la salida desde la puerta principal, las puertas intermedias y la llegada a Taberna Torneo.
-- Pantalla inicial para elegir **Isaías** (mayor, sin gafas) o **Nacho** (menor, gafas rojas).
-- Avance automático lateral; tocar la pantalla para saltar.
-- Animación al caminar mediante dos fotogramas de piernas alternas por niño.
-- **No cambiar el fondo, la escala ni las mecánicas** al retocar los sprites.
-- No usar ilustraciones de interfaz generadas como sustitutos del juego.
-- Mantener una versión estable y otra en desarrollo; guardar versiones antes de cada modificación.
+## Versión guardada: v1.0 (18 octubre 2026)
 
-## Estado 2026-10-17
-- Versión estable de referencia: `carrito_taberna_v10_recortes_y_fondo_corregidos.html`.
-- Versión con selección y personajes: `julieta_va_al_cole_personajes_integrados.html`.
-- Versión en desarrollo: `JULIETA_VA_AL_COLE_animacion_corregida.html`.
-- Problema pendiente: limpiar los recortes de los fotogramas; se aprecian artefactos y transparencias.
-- Los HTML y PNG completos aún están en la copia de seguridad local, **no en este repositorio**.
+- Selección inicial entre Isaías y Nacho.
+- Fase 1: desde la urbanización Panorama hasta Taberna Torneo.
+- Personaje caricaturizado como obstáculo que hay que saltar junto a Taberna Torneo.
+- Pausa y botón CONTINUAR para comenzar la fase 2.
+- Fase 2: semáforo, local sin nombre, sumar y STARBOTICA.
+- Personajes estáticos, sin animación de caminar.
+- Ajustes de escala y altura sobre la acera.
 
-## Estructura prevista
-`index.html`: versión jugable estable.
-`dev/`: pruebas de animación.
-`assets/personajes/`: PNG originales y fotogramas.
-`assets/escenario/`: escenario aprobado.
-`backups/`: hitos anteriores.
+## Abrir el juego
 
-**No sustituir la versión estable sin validar la nueva.**
+Abrir `index.html` en un navegador. El juego está guardado íntegro, con sus imágenes embebidas, en 39 fragmentos de JavaScript en `versiones/v1.0/partes/`. El lanzador recompone el HTML original sin modificarlo. **No borrar los fragmentos**, porque son necesarios para que el juego funcione.
+
+El archivo `versiones/v1.0/index.html` permite abrir esta versión histórica incluso si la versión principal evoluciona.
+
+## Reglas de desarrollo
+
+- Mantener v1.0 intacta como copia de seguridad.
+- Trabajar en versiones nuevas antes de actualizar el lanzador principal.
+- No publicar el repositorio ni activar una web pública sin autorización.
+- Preferir, en futuras versiones, separar el código y las imágenes en archivos individuales para facilitar los cambios.
