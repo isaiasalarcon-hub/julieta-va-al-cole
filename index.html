@@ -38,8 +38,81 @@ function hitObstacle(message){
  document.getElementById('continue').textContent='REINTENTAR ↻';
 }
 const sections=[[0,400,1],[400,680,2.4],[680,810,1],[810,930,2.4],[930,1050,1],[1050,1200,2.4],[1200,1536,1]];
+
+/* Tramo de Concejal Alberto Jiménez-Becerril reconstruido a partir de fotos.
+   Fachadas en orden: local vacío, SUMAR, STARBÓTICA, carteles, portales con rejas.
+   No hay coches ni objetos que causen colisiones. */
+function drawRealStreet(){
+ const X=(at)=>105+(at-scroll)*2.1;
+ ctx.fillStyle='#c9e2ed';ctx.fillRect(0,0,400,640);
+ // Edificio residencial blanco: balcones corridos, persianas y toldos.
+ const facade=[[-320,470,'portal'],[150,280,'vacio'],[430,260,'sumar'],[690,245,'star'],[935,260,'carteles'],[1195,320,'rejas'],[1515,350,'rejas']];
+ for(const [at,w,type] of facade){
+  const x=X(at),ww=w*2.1;
+  if(x>410||x+ww< -10)continue;
+  ctx.fillStyle='#eae8de';ctx.fillRect(x,0,ww,510);
+  ctx.fillStyle='#d6d1c5';ctx.fillRect(x,174,ww,10);ctx.fillRect(x,311,ww,9);
+  ctx.fillStyle='#fffdf6';ctx.fillRect(x,338,ww,170);
+  for(let row=0;row<2;row++){
+   const y=32+row*143;
+   for(let j=0;j<Math.ceil(ww/125);j++){
+    const wx=x+16+j*125;
+    ctx.fillStyle='#d0d7d6';ctx.fillRect(wx,y,84,78);
+    ctx.fillStyle='#faf8ef';ctx.fillRect(wx+3,y+4,78,70);
+    ctx.fillStyle='#c9b9a2';ctx.fillRect(wx+2,y+43,80,31);
+    ctx.strokeStyle='#786f64';ctx.lineWidth=2;
+    for(let q=0;q<4;q++){ctx.beginPath();ctx.moveTo(wx+q*27-4,y+91);ctx.lineTo(wx+q*27-4,y+113);ctx.stroke()}
+    ctx.strokeStyle='#83766a';ctx.beginPath();ctx.moveTo(wx-8,y+91);ctx.lineTo(wx+102,y+91);ctx.moveTo(wx-8,y+112);ctx.lineTo(wx+102,y+112);ctx.stroke();
+    ctx.fillStyle='#e2d3b8';ctx.fillRect(wx-6,y-7,101,9);
+   }
+  }
+  if(type==='sumar'){
+   ctx.fillStyle='#f4f4ee';ctx.fillRect(x+10,360,ww-20,140);
+   ctx.fillStyle='#b9d8d2';ctx.fillRect(x+34,402,ww-68,88);
+   ctx.strokeStyle='#e8e8e0';ctx.lineWidth=8;ctx.strokeRect(x+34,402,ww-68,88);
+   ctx.fillStyle='#f5f5f2';ctx.fillRect(x+14,358,ww-28,37);
+   ctx.fillStyle='#cb3b45';ctx.fillRect(x+22,365,28,26);
+   ctx.fillStyle='white';ctx.font='bold 22px sans-serif';ctx.fillText('S',x+28,386);
+   ctx.fillStyle='#555';ctx.font='bold 16px sans-serif';ctx.fillText('Movimiento',x+57,376);ctx.fillText('Sumar',x+57,392);
+  }else if(type==='star'){
+   ctx.fillStyle='#164caa';ctx.fillRect(x+6,355,ww-12,40);
+   ctx.fillStyle='white';ctx.font='italic bold 30px sans-serif';ctx.fillText('STARBÓTICA',x+18,386);
+   ctx.fillStyle='#34464b';ctx.fillRect(x+9,399,ww-18,103);
+   ctx.strokeStyle='#c1a566';ctx.lineWidth=3;
+   for(let j=0;j<Math.ceil(ww/19);j++){ctx.beginPath();ctx.moveTo(x+12+j*19,400);ctx.lineTo(x+12+j*19,502);ctx.stroke()}
+  }else if(type==='carteles'){
+   ctx.fillStyle='#ede9dd';ctx.fillRect(x+7,358,ww-14,145);
+   const cs=['#b34338','#3d5473','#bb8a44','#2c5b5d','#a35e42'];
+   for(let j=0;j<Math.floor((ww-30)/66);j++){ctx.fillStyle=cs[j%cs.length];ctx.fillRect(x+15+j*66,367,59,129);ctx.fillStyle='#e8d7b6';ctx.fillRect(x+20+j*66,382,49,6);ctx.fillRect(x+20+j*66,445,43,5)}
+  }else if(type==='rejas'||type==='portal'){
+   ctx.fillStyle='#554d48';ctx.fillRect(x+16,363,ww-32,139);
+   ctx.fillStyle='#a8aaa0';ctx.fillRect(x+22,369,ww-44,125);
+   ctx.fillStyle='#554f48';ctx.fillRect(x+30,373,ww-60,118);
+   ctx.strokeStyle='#aeb6b2';ctx.lineWidth=2;
+   for(let j=0;j<Math.ceil(ww/15);j++){ctx.beginPath();ctx.moveTo(x+30+j*15,374);ctx.lineTo(x+30+j*15,498);ctx.stroke()}
+  }else{
+   ctx.fillStyle='#d5d9d5';ctx.fillRect(x+20,397,ww-40,102);
+   ctx.fillStyle='#efede7';ctx.fillRect(x+10,355,ww-20,43);
+  }
+ }
+ // Acera ancha y alcorques, sin obstáculos de juego.
+ ctx.fillStyle='#c5b9a5';ctx.fillRect(0,508,400,132);
+ ctx.strokeStyle='#a69b88';ctx.lineWidth=1;
+ for(let y=525;y<640;y+=29){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(400,y);ctx.stroke()}
+ for(let x=(-scroll*2.1)%74;x<400;x+=74){ctx.beginPath();ctx.moveTo(x,508);ctx.lineTo(x,640);ctx.stroke()}
+ // Plátanos de sombra, como en las fotografías.
+ for(const at of [95,355,615,1000,1330,1660]){
+  const x=X(at);if(x< -125||x>525)continue;
+  ctx.fillStyle='#8c806b';ctx.fillRect(x-18,496,49,13);
+  ctx.fillStyle='#6f7869';ctx.fillRect(x,190,15,305);
+  ctx.fillStyle='#9ca58b';ctx.fillRect(x+4,208,5,265);
+  ctx.strokeStyle='#68765e';ctx.lineWidth=11;ctx.beginPath();ctx.moveTo(x+7,277);ctx.lineTo(x-74,141);ctx.moveTo(x+7,240);ctx.lineTo(x+91,120);ctx.stroke();
+  for(const [dx,dy,r] of [[-80,130,74],[-19,94,87],[77,122,78],[7,48,63]]){ctx.fillStyle='#557c4b';ctx.beginPath();ctx.arc(x+dx,dy,r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#75975a';ctx.beginPath();ctx.arc(x+dx-12,dy-9,r*.7,0,Math.PI*2);ctx.fill()}
+ }
+}
+
 function frame(t){const dt=Math.min((t-last)/1000||0,.05);last=t;if(state==='running'){scroll=Math.min(phase===1?finish:finish2,scroll+150*dt);if(phase===1&&!collided&&Math.abs(scroll-obstacleAt)<10&&jump<75){hitObstacle('¡Cuidado! ¡Hay que saltar!');}if(phase===1&&!passedObstacles.has('runner-gif')&&runnerX()<=122){passedObstacles.add('runner-gif');if(runnerX()>35&&jump<105)hitObstacle('¡Salta al corredor!');}for(const o of streetObstacles){if(o.phase===phase&&!passedObstacles.has(o.phase+'-'+o.at)&&scroll>=o.at){passedObstacles.add(o.phase+'-'+o.at);if(jump<o.height+12){hitObstacle('¡Cuidado con el obstáculo!');break;}}}if(jump>0){jump+=vy*dt;vy-=890*dt;if(jump<=0){jump=0;vy=0;jumpCount=0}}if(phase===2&&!sumarPlayed&&scroll>=sumarPersonAt-85){sumarPlayed=true;state='sumar';scroll=sumarPersonAt-85;openSumar();}if(phase===1&&scroll>=finish){state='transition';scroll=finish;jump=0;vy=0;jumpCount=0;document.querySelector('#transition h2').textContent='¡Has saltado el obstáculo!';document.getElementById('continue').textContent='CONTINUAR ▶';document.getElementById('transition').classList.add('show')}else if(phase===2&&scroll>=finish2){state='arcade';document.getElementById('arcade').classList.add('show');document.getElementById('arcintro').style.display='block';document.getElementById('arcgame').style.display='none';pause.textContent='PAUSA Ⅱ'}if(phaseBanner>0)phaseBanner-=dt}ctx.clearRect(0,0,400,640);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';const scene=phase===1?bg:bg2;
-if(scene.complete&&scene.naturalWidth){
+if(phase===2){drawRealStreet()}else if(scene.complete&&scene.naturalWidth){
   const scale=640/scene.naturalHeight;
   const srcWidth=400/scale;
   const maxX=Math.max(0,scene.naturalWidth-srcWidth);
