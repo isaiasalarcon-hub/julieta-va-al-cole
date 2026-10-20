@@ -191,4 +191,18 @@ document.getElementById('again').onclick=newGame;
 document.getElementById('exitttt').onclick=()=>{arcade.classList.remove('show');state='done';pause.textContent='REPETIR ↻'};
 
 
+</script>
+<script>
+/* Entrada independiente a BOLITA, incluso si la inicialización principal se interrumpe. */
+(function(){
+ const direct=new URLSearchParams(location.search).get('pantalla')==='bolita'||location.hash==='#bolita';
+ if(!direct)return;
+ const menu=document.getElementById('menu'),modal=document.getElementById('sumarModal');
+ if(menu)menu.style.setProperty('display','none','important');
+ if(modal)modal.classList.add('show');
+ const intro=document.getElementById('sumarIntro'),game=document.getElementById('sumarGame');
+ if(intro)intro.style.display='none';
+ if(game)game.style.display='block';
+ if(typeof beginShells==='function')beginShells();
+})();
 </script></body></html>
