@@ -170,6 +170,13 @@ shells.forEach((el,i)=>el.onclick=()=>{if(!shellChoosing||shellBusy)return;shell
 document.getElementById('sumarAgain').onclick=()=>{shells.forEach(el=>el.style.top='33px');beginShells()};
 document.getElementById('sumarExit').onclick=()=>{resetShellTimers();sumarModal.classList.remove('show');state='running';shells.forEach(el=>el.style.top='33px')};
 
+// Acceso directo de pruebas a BOLITA sin recorrer las fases.
+if(new URLSearchParams(window.location.search).get('pantalla')==='bolita'){
+ document.getElementById('menu').style.display='none';
+ phase=2;scroll=sumarPersonAt-85;sumarPlayed=true;state='sumar';
+ openSumar();beginShells();
+}
+
 // Minijuego real: Isi (humano) contra Nacho (IA sencilla).
 const arcade=document.getElementById('arcade'), boardEl=document.getElementById('tttboard');
 const portraits={I:document.querySelector('.card[data-id="older"] img').src,N:document.querySelector('.card[data-id="younger"] img').src};
