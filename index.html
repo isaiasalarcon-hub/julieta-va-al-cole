@@ -18,6 +18,17 @@
 #sumarModal .shell:after{display:none}
 #sumarModal .ball{top:116px}
 #sumarModal .sumarStatus{font-size:19px;color:#74380e;background:#ffe7af;border-radius:12px;padding:10px}
+
+/* BOLITA 4: recorte geométrico sin damero, usando lámina del usuario */
+#sumarModal .sumarPanel{background:linear-gradient(#fff1cf,#ffedc6);border:5px solid #8d4b21;box-shadow:0 10px 0 #633418,0 16px 36px #0008;overflow:visible}
+#sumarModal .sumarPanel h2{background:linear-gradient(#fbd393,#e6a054);border:4px solid #8e481d;box-shadow:0 5px #a65c29;color:#512407;border-radius:14px;padding:10px}
+#sumarModal #sumarGame>p{background:#fff5d8;border:3px solid #cc8d42;border-radius:13px;font-weight:900;color:#60310f}
+#sumarModal .shellStage{height:200px;border:0;border-radius:13px;overflow:visible;background:linear-gradient(180deg,#f7d498 0%,#e7a45e 55%,#d28a40 56%,#bb6b2d 90%,#8a441f 91%);box-shadow:inset 0 0 0 5px #8d4b21,0 7px 0 #693619}
+#sumarModal .shell{top:42px;height:124px;filter:drop-shadow(0 7px 2px #542a1d66)}
+#sumarModal .shell:before{display:block;content:'';width:96px;height:112px;border:0;border-radius:0;box-shadow:none;background-image:url('assets/file_00000000289881f5a0b01dd5ab44962b.png?v=4')!important;background-size:768px 384px!important;background-position:-8px -13px!important;background-repeat:no-repeat!important;clip-path:polygon(23% 7%,35% 3%,72% 3%,84% 8%,94% 80%,97% 90%,88% 96%,15% 96%,4% 90%,7% 78%)}
+#sumarModal .shell:after{display:none}
+#sumarModal .ball{background:radial-gradient(circle at 33% 24%,#fff 0 7%,#ff6067 14%,#ed1830 60%,#9d0016 100%);border:2px solid #a20e1d;box-shadow:0 4px 2px #0005}
+#sumarModal .sumarStatus{background:#ffe3a0;border:3px solid #d99d55;color:#62310d;border-radius:13px;padding:8px;font-size:18px}
 </style></head><body>
 <div id="transition"><div class="panel" style="padding:12px 14px 20px;max-height:94dvh;overflow:auto"><h2 style="font-size:21px;margin:4px 0 8px">¡Hemos llegado a Taberna Torneo!</h2><div style="position:relative;max-width:230px;margin:auto"><img alt="Personaje de Taberna Torneo" src="assets/imagen_01.jpg" style="display:block;width:100%;height:270px;object-fit:contain;background:#0b0b0d;border-radius:14px"><div style="position:absolute;right:-10px;top:6px;background:white;border:3px solid #173b59;border-radius:28px;padding:9px 14px;color:#173b59;font-size:23px;font-weight:900;transform:rotate(8deg)">¡HOLA!</div></div><p style="margin:10px 0">¿Seguimos el camino?</p><button id="continue">CONTINUAR ▶</button></div></div><div id="sumarModal"><div class="sumarPanel"><h2>🛍️ SUMAR 🛍️</h2><div id="sumarIntro"><img class="sumarPortrait" id="sumarPortrait" src="assets/personajes/sumar_retrato.jpeg" alt="Caricatura del personaje de SUMAR"><p style="font-size:22px;font-weight:900">¿Quieres jugar?</p><p>¡Encuentra la bolita escondida bajo uno de los tres cubiletes de madera!</p><button id="sumarStart">¡VAMOS A JUGAR! ▶</button></div><div id="sumarGame" style="display:none"><p>¡Mira bien dónde está la bolita!</p><div class="shellStage" id="shellStage"><div class="ball" id="shellBall"></div><button class="shell" data-cup="0" aria-label="Cubilete 1"></button><button class="shell" data-cup="1" aria-label="Cubilete 2"></button><button class="shell" data-cup="2" aria-label="Cubilete 3"></button></div><div class="sumarStatus" id="sumarStatus">¡Presta atención!</div><button id="sumarAgain" style="display:none">OTRA PARTIDA ↻</button><button id="sumarExit" style="display:none;background:#2886af">SEGUIR A STARBÓTICA ▶</button></div></div></div><div id="arcade"><div class="arc"><h2>⭐ STARBÓTICA ⭐</h2><div id="arcintro"><p>¡Habéis entrado en Starbótica!</p><p>¡Isi contra Nacho al <b>TRES EN RAYA</b>!</p><p>Juegas con la cara de <b>ISI</b>. Nacho es el rival.</p><button class="arcbtn" id="startttt">EMPEZAR ▶</button></div><div id="arcgame" style="display:none"><div class="arcplayers"><span>🔵 ISI</span><span>🔴 NACHO</span></div><div class="tttboard" id="tttboard"></div><div id="arcstatus">Tu turno, Isi</div><button class="arcbtn" id="again" style="display:none">OTRA PARTIDA ↻</button><button class="arcbtn" id="exitttt" style="margin-top:10px;background:#2586b3">SALIR A LA CALLE ▶</button></div></div></div><div id="wrap"><canvas id="game" width="400" height="640"></canvas></div><div id="hint">TOCA LA PANTALLA PARA SALTAR</div><button id="pause">PAUSA Ⅱ</button><div id="menu"><div id="menuinner"><h1>JULIETA VA AL COLE<br><small>¿QUIÉN ACOMPAÑA A JULIETA?</small></h1><div class="cards"><button class="card selected" data-id="older"><img src="assets/imagen_02.png"><span>ISAÍAS</span></button><button class="card" data-id="younger"><img src="assets/imagen_03.png"><span>NACHO</span></button></div><button id="go">EMPEZAR ▶</button></div></div>
 <script>
@@ -172,40 +183,5 @@ document.getElementById('startttt').onclick=()=>{document.getElementById('arcint
 document.getElementById('again').onclick=newGame;
 document.getElementById('exitttt').onclick=()=>{arcade.classList.remove('show');state='done';pause.textContent='REPETIR ↻'};
 
-/* Sprites recortados de la lámina de BOLITA, con transparencia real calculada en el navegador. */
-(function(){
- const sheet=new Image();
- sheet.src='assets/file_00000000289881f5a0b01dd5ab44962b.png?v=20261020';
- function extract(x,y,w,h,removeBackground){
-  const cv=document.createElement('canvas');cv.width=w;cv.height=h;
-  const cx=cv.getContext('2d',{willReadFrequently:true});
-  cx.drawImage(sheet,x,y,w,h,0,0,w,h);
-  if(removeBackground){
-   const im=cx.getImageData(0,0,w,h),p=im.data;
-   for(let i=0;i<p.length;i+=4){
-    const r=p[i],g=p[i+1],b=p[i+2],min=Math.min(r,g,b),max=Math.max(r,g,b);
-    // El tablero original trae damero blanco/gris incrustado: eliminar SOLO los píxeles neutros claros.
-    if(min>164&&max-min<22)p[i+3]=0;
-    else if(min>143&&max-min<14)p[i+3]=Math.min(p[i+3],65);
-   }
-   cx.putImageData(im,0,0);
-  }
-  return cv.toDataURL('image/png');
- }
- sheet.onload=()=>{
-  try{
-   const cup=extract(18,35,195,211,true);
-   const ball=extract(41,468,91,96,true);
-   const wood=extract(20,567,546,144,true);
-   const st=document.createElement('style');
-   st.textContent=`
-    #sumarModal .shell:before{width:95px;height:103px;background-image:url("${cup}")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
-    #sumarModal .ball{width:23px;height:23px;border:0;background-image:url("${ball}");background-size:100% 100%;background-color:transparent;box-shadow:none}
-    #sumarModal .shellStage{background-image:linear-gradient(#fce3b6aa,#c37c40aa),url("${wood}");background-size:cover,100% 100%;background-position:center}
-   `;
-   document.head.appendChild(st);
-  }catch(e){console.warn('BOLITA sprites: se mantienen los cubiletes de reserva',e)}
- };
- sheet.onerror=()=>console.warn('No se pudo cargar la lámina de sprites BOLITA');
-})();
+
 </script></body></html>
