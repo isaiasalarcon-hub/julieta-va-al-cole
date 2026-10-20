@@ -36,3 +36,5 @@ for x in (70,930):
   d.line((x-5,y-2,x+5,y+2),fill='#d8d4cb',width=2)
 table.save(out/'mesa.png',optimize=True)
 print([(p.name,p.stat().st_size) for p in out.glob('*.png')])
+
+# Regeneración automática de assets.
