@@ -171,4 +171,41 @@ function newGame(){cells=Array(9).fill('');finished=false;aiPending=false;docume
 document.getElementById('startttt').onclick=()=>{document.getElementById('arcintro').style.display='none';document.getElementById('arcgame').style.display='block';newGame()};
 document.getElementById('again').onclick=newGame;
 document.getElementById('exitttt').onclick=()=>{arcade.classList.remove('show');state='done';pause.textContent='REPETIR ↻'};
+
+/* Sprites recortados de la lámina de BOLITA, con transparencia real calculada en el navegador. */
+(function(){
+ const sheet=new Image();
+ sheet.src='assets/file_00000000289881f5a0b01dd5ab44962b.png?v=20261020';
+ function extract(x,y,w,h,removeBackground){
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+  const cx=cv.getContext('2d',{willReadFrequently:true});
+  cx.drawImage(sheet,x,y,w,h,0,0,w,h);
+  if(removeBackground){
+   const im=cx.getImageData(0,0,w,h),p=im.data;
+   for(let i=0;i<p.length;i+=4){
+    const r=p[i],g=p[i+1],b=p[i+2],min=Math.min(r,g,b),max=Math.max(r,g,b);
+    // El tablero original trae damero blanco/gris incrustado: eliminar SOLO los píxeles neutros claros.
+    if(min>164&&max-min<22)p[i+3]=0;
+    else if(min>143&&max-min<14)p[i+3]=Math.min(p[i+3],65);
+   }
+   cx.putImageData(im,0,0);
+  }
+  return cv.toDataURL('image/png');
+ }
+ sheet.onload=()=>{
+  try{
+   const cup=extract(18,35,195,211,true);
+   const ball=extract(41,468,91,96,true);
+   const wood=extract(20,567,546,144,true);
+   const st=document.createElement('style');
+   st.textContent=`
+    #sumarModal .shell:before{width:95px;height:103px;background-image:url("${cup}")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
+    #sumarModal .ball{width:23px;height:23px;border:0;background-image:url("${ball}");background-size:100% 100%;background-color:transparent;box-shadow:none}
+    #sumarModal .shellStage{background-image:linear-gradient(#fce3b6aa,#c37c40aa),url("${wood}");background-size:cover,100% 100%;background-position:center}
+   `;
+   document.head.appendChild(st);
+  }catch(e){console.warn('BOLITA sprites: se mantienen los cubiletes de reserva',e)}
+ };
+ sheet.onerror=()=>console.warn('No se pudo cargar la lámina de sprites BOLITA');
+})();
 </script></body></html>
