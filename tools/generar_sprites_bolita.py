@@ -1,6 +1,11 @@
 from PIL import Image, ImageDraw, ImageFilter
 from pathlib import Path
 im=Image.open('assets/file_00000000289881f5a0b01dd5ab44962b.png').convert('RGB')
+# Las coordenadas de los recortes corresponden al atlas de referencia 1536x768.
+# La lámina subida a GitHub puede tener otra resolución: normalizar primero.
+print('Tamaño original del atlas:',im.size)
+if im.size != (1536,768):
+    im=im.resize((1536,768),Image.Resampling.LANCZOS)
 out=Path('assets/bolita')
 out.mkdir(parents=True,exist_ok=True)
 specs={
