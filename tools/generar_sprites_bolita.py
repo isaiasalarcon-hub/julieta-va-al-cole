@@ -43,3 +43,5 @@ for name,(x1,y1,x2,y2) in regions.items():
     Image.fromarray(rgba[top:bottom,left:right]).save(out/(name+'.png'),optimize=True)
     print(name, 'sprite',right-left,bottom-top)
 (out/'cubilete.png').write_bytes((out/'cubilete_frontal.png').read_bytes())
+
+# Regenerar sprites originales limpios.
