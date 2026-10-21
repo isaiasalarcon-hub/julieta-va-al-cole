@@ -146,20 +146,23 @@ function drawRealStreet(){
 }
 
 function drawPortal(){
+ ctx.save();
  ctx.fillStyle='#92c8ee';ctx.fillRect(0,0,400,640);
- ctx.fillStyle='#f4eee0';ctx.fillRect(0,0,400,542);
+ ctx.translate(-scroll*.52,0);
+ ctx.fillStyle='#f4eee0';ctx.fillRect(0,0,2600,542);
  for(let y of [30,165,300]){ctx.fillStyle='#d6d0c5';ctx.fillRect(0,y,400,9)}
  for(let y of [60,194])for(let x of [35,155,275]){
   ctx.fillStyle='#9ba6a8';ctx.fillRect(x,y,83,83);ctx.fillStyle='#e5f1ef';ctx.fillRect(x+5,y+5,73,73);
   ctx.fillStyle='#555f67';ctx.fillRect(x,y+80,83,8);
  }
- ctx.fillStyle='#d9d2be';ctx.fillRect(0,350,400,192);
+ ctx.fillStyle='#d9d2be';ctx.fillRect(0,350,2600,192);
+ for(let x=420;x<2600;x+=310){ctx.fillStyle='#e7e0d3';ctx.fillRect(x,0,300,540);for(let y of [64,204])for(let wx of [x+28,x+145]){ctx.fillStyle='#a4b6b9';ctx.fillRect(wx,y,93,89);ctx.fillStyle='#f2efe5';ctx.fillRect(wx+5,y+5,83,78);ctx.fillStyle='#606a70';ctx.fillRect(wx-4,y+86,102,5)}ctx.fillStyle='#435663';ctx.fillRect(x+52,394,118,145);ctx.fillStyle='#bac9c9';ctx.fillRect(x+58,401,106,136)}
  ctx.fillStyle='#2d4753';ctx.fillRect(55,390,120,152);ctx.fillRect(207,390,61,152);ctx.fillRect(300,390,65,152);
  ctx.fillStyle='#a4c4d0';ctx.fillRect(65,401,100,135);ctx.fillRect(216,400,43,137);ctx.fillRect(308,400,48,137);
  for(let x of [80,103,126,149,224,240,316,334]){ctx.fillStyle='#314c58';ctx.fillRect(x,404,4,131)}
  ctx.fillStyle='#faf6e5';ctx.fillRect(30,335,342,42);
  ctx.fillStyle='#294963';ctx.textAlign='center';ctx.font='bold 19px sans-serif';ctx.fillText('URB. PANORAMA 1 y 2',200,362);ctx.textAlign='left';
- ctx.fillStyle='#c7b59b';ctx.fillRect(0,542,400,98);
+ ctx.restore();ctx.fillStyle='#c7b59b';ctx.fillRect(0,542,400,98);
  for(let y=554;y<640;y+=25){ctx.fillStyle='#a18d78';ctx.fillRect(0,y,400,2)}
  ctx.fillStyle='#606f74';ctx.fillRect(0,539,400,6);
 }
@@ -209,7 +212,7 @@ function drawPhase3(){
  ctx.textAlign='left';
 }
 function frame(t){const dt=Math.min((t-last)/1000||0,.05);last=t;if(state==='running'){scroll=Math.min(phase===1?finish:phase===2?finish2:finish3,scroll+150*dt);if(phase===1&&!collided&&Math.abs(scroll-obstacleAt)<10&&jump<75){hitObstacle('¡Cuidado! ¡Hay que saltar!');}if(phase===1&&!passedObstacles.has('runner-gif')&&runnerX()<=122){passedObstacles.add('runner-gif');if(runnerX()>35&&jump<105)hitObstacle('¡Salta al corredor!');}for(const o of streetObstacles){if(o.phase===phase&&!passedObstacles.has(o.phase+'-'+o.at)&&scroll>=o.at){passedObstacles.add(o.phase+'-'+o.at);if(jump<o.height+12){hitObstacle('¡Cuidado con el obstáculo!');break;}}}if(jump>0){jump+=vy*dt;vy-=890*dt;if(jump<=0){jump=0;vy=0;jumpCount=0}}if(phase===2&&!sumarPlayed&&scroll>=sumarPersonAt-85){sumarPlayed=true;state='sumar';scroll=sumarPersonAt-85;location.href='bolita.html?jugador='+(who==='younger'?'nacho':'isaias');}if(phase===1&&scroll>=finish){state='transition';scroll=finish;jump=0;vy=0;jumpCount=0;document.querySelector('#transition h2').textContent='¡Has saltado el obstáculo!';document.getElementById('continue').textContent='CONTINUAR ▶';document.getElementById('transition').classList.add('show')}else if(phase===2&&scroll>=finish2){state='arcade';document.getElementById('arcade').classList.add('show');document.getElementById('arcintro').style.display='block';document.getElementById('arcgame').style.display='none';pause.textContent='PAUSA Ⅱ'}else if(phase===3&&scroll>=finish3){state='done';pause.textContent='REPETIR ↻'}if(phaseBanner>0)phaseBanner-=dt}ctx.clearRect(0,0,400,640);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';const scene=phase===1?bg:bg2;
-if(phase===1&&scroll<260){drawPortal()}else if(phase===3){drawPhase3()}else if(phase===2&&phase2Panorama.complete&&phase2Panorama.naturalWidth){const sourceWidth=Math.min(phase2Panorama.naturalWidth,400*phase2Panorama.naturalHeight/640);const maxSourceX=Math.max(0,phase2Panorama.naturalWidth-sourceWidth);const sourceX=Math.min(maxSourceX,(scroll/finish2)*maxSourceX);ctx.drawImage(phase2Panorama,sourceX,0,sourceWidth,phase2Panorama.naturalHeight,0,0,400,640);}else if(phase===2){drawRealStreet()}else if(phase===1&&(!bg.complete||!bg.naturalWidth)){drawPortal()}else if(scene.complete&&scene.naturalWidth){
+if(phase===1){drawPortal()}else if(phase===3){drawPhase3()}else if(phase===2&&phase2Panorama.complete&&phase2Panorama.naturalWidth){const sourceWidth=Math.min(phase2Panorama.naturalWidth,400*phase2Panorama.naturalHeight/640);const maxSourceX=Math.max(0,phase2Panorama.naturalWidth-sourceWidth);const sourceX=Math.min(maxSourceX,(scroll/finish2)*maxSourceX);ctx.drawImage(phase2Panorama,sourceX,0,sourceWidth,phase2Panorama.naturalHeight,0,0,400,640);}else if(phase===2){drawRealStreet()}else if(phase===1&&(!bg.complete||!bg.naturalWidth)){drawPortal()}else if(scene.complete&&scene.naturalWidth){
   const scale=640/scene.naturalHeight;
   const srcWidth=400/scale;
   const maxX=Math.max(0,scene.naturalWidth-srcWidth);
