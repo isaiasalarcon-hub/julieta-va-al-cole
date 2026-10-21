@@ -185,9 +185,7 @@ if(new URLSearchParams(location.search).get('bolita_superada')==='1' && sessionS
 
 // Acceso directo de pruebas a BOLITA sin recorrer las fases.
 if(new URLSearchParams(window.location.search).get('pantalla')==='bolita'){
- document.getElementById('menu').style.display='none';
- phase=2;scroll=sumarPersonAt-85;sumarPlayed=true;state='sumar';
- openSumar();beginShells();
+ location.replace('bolita.html?jugador='+(who==='younger'?'nacho':'isaias')+'&v=marcador4');
 }
 
 // Minijuego real: Isi (humano) contra Nacho (IA sencilla).
