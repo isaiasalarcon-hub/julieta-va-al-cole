@@ -1,29 +1,45 @@
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image
 from pathlib import Path
-im=Image.open('assets/file_00000000289881f5a0b01dd5ab44962b.png').convert('RGB')
-# Las coordenadas de los recortes corresponden al atlas de referencia 1536x768.
-# La lámina subida a GitHub puede tener otra resolución: normalizar primero.
-print('Tamaño original del atlas:',im.size)
-if im.size != (1536,768):
+import cv2
+import numpy as np
+src=Path('assets/file_00000000289881f5a0b01dd5ab44962b.png')
+im=Image.open(src).convert('RGB')
+print('Atlas:',im.size)
+if im.size!=(1536,768):
     im=im.resize((1536,768),Image.Resampling.LANCZOS)
-out=Path('assets/bolita')
-out.mkdir(parents=True,exist_ok=True)
-specs={
- 'cubilete_frontal':((15,30,190,214),[(40,17),(55,10),(86,7),(119,7),(144,13),(155,20),(174,152),(175,166),(168,174),(148,180),(32,180),(10,172),(4,162),(8,147)]),
- 'cubilete_inclinado':((380,18,562,214),[(13,44),(27,22),(54,10),(87,2),(105,4),(132,22),(171,141),(178,155),(169,171),(141,184),(76,195),(44,185),(26,168)]),
- 'bolita':((40,420,113,493),[(35,2),(50,5),(62,15),(70,31),(69,47),(58,63),(44,70),(27,69),(11,58),(3,43),(4,27),(14,10)]),
- 'mesa':((15,502,505,635),[(47,5),(448,5),(485,66),(488,90),(483,101),(466,104),(465,119),(456,128),(438,128),(436,104),(58,104),(57,124),(40,128),(26,126),(24,104),(5,103),(2,92),(4,74)]),
- 'cartel_mirar':((557,637,886,742),[(25,4),(300,4),(322,17),(325,85),(311,99),(17,99),(4,85),(4,20)]),
- 'cartel_pregunta':((900,638,1231,742),[(22,3),(310,3),(328,19),(329,86),(311,101),(18,101),(3,86),(3,20)]),
+out=Path('assets/bolita');out.mkdir(exist_ok=True,parents=True)
+# Los cuadros de fondo son grises, mientras los sprites originales son saturados.
+# Se identifica el objeto mediante la mayor componente conexa y se amplía
+# ligeramente la máscara para incluir el contorno negro, sin arrastrar el damero.
+regions={
+ 'cubilete_frontal':(15,28,195,215),
+ 'cubilete_inclinado':(380,18,562,214),
+ 'bolita':(37,419,116,494),
+ 'mesa':(15,500,510,637),
+ 'cartel_mirar':(557,637,886,742),
+ 'cartel_pregunta':(900,638,1231,742)
 }
-for name,(bbox,points) in specs.items():
-    crop=im.crop(bbox).convert('RGBA')
-    mask=Image.new('L',crop.size,0)
-    ImageDraw.Draw(mask).polygon(points,fill=255)
-    crop.putalpha(mask.filter(ImageFilter.GaussianBlur(.65)))
-    crop.save(out/(name+'.png'),optimize=True)
-# Compatibilidad con rutas existentes
-for old,new in [('cubilete_frontal','cubilete'),('bolita','bolita'),('mesa','mesa')]:
-    if old!=new:
-        (out/(new+'.png')).write_bytes((out/(old+'.png')).read_bytes())
-print('Sprites originales:',[(p.name,p.stat().st_size) for p in out.glob('*.png')])
+for name,(x1,y1,x2,y2) in regions.items():
+    rgb=np.array(im.crop((x1,y1,x2,y2)))
+    hsv=cv2.cvtColor(rgb,cv2.COLOR_RGB2HSV)
+    saturated=(hsv[:,:,1]>55).astype(np.uint8)
+    n,labels,stats,centroids=cv2.connectedComponentsWithStats(saturated,8)
+    if n<2:raise ValueError('No se encontró sprite: '+name)
+    idx=1+np.argmax(stats[1:,cv2.CC_STAT_AREA])
+    mask=(labels==idx).astype(np.uint8)*255
+    # Cerrar huecos interiores del objeto, preservar la forma exterior.
+    kernel=cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
+    mask=cv2.morphologyEx(mask,cv2.MORPH_CLOSE,kernel)
+    contours,_=cv2.findContours(mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    solid=np.zeros_like(mask)
+    cv2.drawContours(solid,contours,-1,255,cv2.FILLED)
+    solid=cv2.dilate(solid,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5)))
+    solid=cv2.GaussianBlur(solid,(3,3),.65)
+    rgba=np.dstack((rgb,solid))
+    ys,xs=np.where(solid>4)
+    pad=2
+    left=max(0,int(xs.min())-pad);right=min(rgb.shape[1],int(xs.max())+pad+1)
+    top=max(0,int(ys.min())-pad);bottom=min(rgb.shape[0],int(ys.max())+pad+1)
+    Image.fromarray(rgba[top:bottom,left:right]).save(out/(name+'.png'),optimize=True)
+    print(name, 'sprite',right-left,bottom-top)
+(out/'cubilete.png').write_bytes((out/'cubilete_frontal.png').read_bytes())
